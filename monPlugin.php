@@ -106,16 +106,78 @@ function my_action_javascript() {
     <?php
 }
 
+/********************************************************************************/
+
+
 add_action( 'wp_ajax_my_action', 'my_action' );
 
 function my_action() {
 
+//define('SERVER', 'sparql'); # switch resolver to pure sparql
+    header('Access-Control-Allow-Credentials: true', true);
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: Content-Type');
 
-    $cequejeveu = " ca marche ";
+    $payload = null;
 
-    echo $cequejeveu;
+    switch ($_SERVER['REQUEST_METHOD']) {
+        case 'POST':
+            if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {
+                $rawBody = file_get_contents('php://input');
+                $requestData = json_decode($rawBody ?: '', true);
+            } else {
+                $requestData = $_POST;
+            }
+            break;
+        case 'GET':
+            $requestData = $_GET;
+            break;
+        default:
+            exit;
+    }
 
-    wp_die();
+    $payload = isset($requestData['query']) ? $requestData['query'] : null;
+
+
+// composer autoload
+    require __DIR__ . '/vendor/autoload.php';
+
+// instanciation du client
+    $api = \Datatourisme\Api\DatatourismeApi::create('http://localhost:9999/blazegraph/namespace/kb/sparql');
+
+// éxecution d'une requête
+
+    $result = $api->process('{
+    poi (
+     size: 100,          # <- Limite le nombre de résultats par page
+     from: 0,    
+    )
+    {
+    total
+    results {
+    rdfs_label
+      isLocatedAt {
+        schema_address {
+            schema_streetAddress
+            cedex
+            schema_addressLocality
+            }
+            }
+      takesPlaceAt {
+      startDate
+      startTime
+      endDate
+      endTime
+      }
+    }
+  }
+}');
+
+// prévisualisation des résultats
+
+
+    echo json_encode($result);
+
 
     // this is required to terminate immediately and return a proper response
 }
