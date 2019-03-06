@@ -1,5 +1,23 @@
-console.log("Le js se met en marche, sans jquery, ca mare ? ");
 
+/*jQuery(document).ready( function($) {
+
+    $.ajax({
+        url: "http://localhost:8888/wordpress/wp-admin/admin.php?page=test-plugin",
+        success: function( data ) {
+            alert( 'Your home page has ' + $(data).find('div').length + ' div elements.');
+        }
+    })
+
+});
+
+Ca marche aussi...
+
+
+
+*/
+
+
+/**
 function ajaxRequest() {
     var xhttp = new XMLHttpRequest();
 
@@ -10,7 +28,7 @@ function ajaxRequest() {
 
             var obj = JSON.parse(this.responseText);
             console.log(this.responseText);
-            /* document.getElementById('infos').innerHTML = this.responseText + "<br><br>";
+            document.getElementById('infos').innerHTML = this.responseText + "<br><br>";
 
             console.log(obj.data.poi.results.length);
 
@@ -33,13 +51,13 @@ function ajaxRequest() {
             }
 
 
-*/
+
 
         }
 
     };
 
-    xhttp.open("GET", "Links_Plugin/request_api", true);
+    xhttp.open("GET", "monPlugin.php", true);
 
     xhttp.send();
 
@@ -55,3 +73,4 @@ window.onload = function marche(){
 
 };
 
+**/

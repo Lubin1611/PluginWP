@@ -64,6 +64,8 @@ function test_init() {
 
 }
 
+/*******link de ma page js *********/
+
 add_action('admin_enqueue_scripts', 'my_scripts'); // add scripts to dashboard head
 
 function my_scripts() {
@@ -72,6 +74,85 @@ function my_scripts() {
     wp_enqueue_script('my_script');
 }
 
+/**** provient de la librairie wordpress *****/
 
 
-?>
+add_action( 'admin_footer', 'my_action_javascript' ); // Write our JS below here
+
+function my_action_javascript() {
+
+    ?>
+
+<script type="text/javascript" >
+
+    jQuery(document).ready(function($) {
+
+        var data = {
+            'action': 'my_action',
+
+        };
+
+        // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+
+        jQuery.post(ajaxurl, data, function(response) {
+
+            document.getElementById('texte').innerHTML = response;
+
+        });
+    });
+
+</script>
+
+    <?php
+}
+
+add_action( 'wp_ajax_my_action', 'my_action' );
+
+function my_action() {
+
+
+    $cequejeveu = " ca marche ";
+
+    echo $cequejeveu;
+
+    wp_die();
+
+    // this is required to terminate immediately and return a proper response
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*function myenqueue() {
+
+    wp_enqueue_script( 'mon-script-ajax', get_template_directory_uri() . 'Links_Plugin/js/dynamic.js', array('jquery') );
+    wp_localize_script( 'mon-script-ajax', 'adminAjax', admin_url( 'admin-ajax.php' ) );
+}
+
+
+add_action( 'wp_ajax_get_my_post', 'mafonction' );
+add_action( 'wp_ajax_nopriv_get_my_post', 'mafonction' );
+
+
+function mafonction()
+{
+    echo "test";
+
+    die();
+
+}
+*/
+
+
+
+
