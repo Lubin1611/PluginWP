@@ -44,14 +44,24 @@ function test_init() {
 
     <label>Cliquez sur le bouton</label><input type="button" value="Interroger" id = "test">
 
-    <div id = infos_plugin>
-
-
-    </div>
     <div id ="texte">
 
 
     </div>
+
+    <div id = infos_plugin>
+
+        <table id="planning" border="0">
+            <tr>
+                <th>Intitulé du spectacle</th>
+                <th>Adresse</th>
+            </tr>
+        </table>
+
+    </div>
+
+
+
 
 
 
@@ -94,9 +104,87 @@ function my_action_javascript() {
 
         // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 
-        jQuery.post(ajaxurl, data, function(response) {
+            jQuery.post(ajaxurl, data, function(response) {
 
-            document.getElementById('texte').innerHTML = response;
+
+                console.log(response);
+
+
+                var obj = JSON.parse(response);
+
+           document.getElementById('test').addEventListener('click', function () {
+
+               document.getElementById('texte').innerHTML = "Il y a " +  obj.data.poi.total + " resultats dont : " + "<br><br>"
+
+
+               function generate_table() {
+
+                   var obj = JSON.parse(response);
+
+                   for (var t = 0; t < obj.data.poi.results.length; t++ ) {
+
+                       if (obj.data.poi.results[t].takesPlaceAt[0].endTime = "null") {
+
+                           obj.data.poi.results[t].takesPlaceAt[0].endTime = "heure de fin non définie par le serveur";
+
+                       }
+
+
+
+                       tr = document.createElement("tr");
+
+
+                       td1 = document.createElement("td");
+                       txt1 = document.createTextNode(obj.data.poi.results[t].rdfs_label);
+                       td1.appendChild(txt1);
+                       tr.appendChild(td1);
+
+
+                       td2 = document.createElement("td");
+                       txt2 = document.createTextNode(obj.data.poi.results[t].isLocatedAt[0].schema_address[0].schema_streetAddress);
+                       td2.appendChild(txt2);
+                       tr.appendChild(td2);
+
+
+                       td3 = document.createElement("td");
+                       txt3 = document.createTextNode(obj.data.poi.results[t].isLocatedAt[0].schema_address[0].schema_addressLocality);
+                       td3.appendChild(txt3);
+                       tr.appendChild(td3);
+
+
+                       td4= document.createElement("td");
+                       txt4 = document.createTextNode(obj.data.poi.results[t].takesPlaceAt[0].startDate);
+                       td4.appendChild(txt4);
+                       tr.appendChild(td4);
+
+
+                       td5= document.createElement("td");
+                       txt5 = document.createTextNode(obj.data.poi.results[t].takesPlaceAt[0].startTime);
+                       td5.appendChild(txt5);
+                       tr.appendChild(td5);
+
+
+                       td6= document.createElement("td");
+                       txt6 = document.createTextNode(obj.data.poi.results[t].takesPlaceAt[0].endDate);
+                       td6.appendChild(txt6);
+                       tr.appendChild(td6);
+
+
+                       td7= document.createElement("td");
+                       txt7 = document.createTextNode(obj.data.poi.results[t].takesPlaceAt[0].endTime);
+                       td7.appendChild(txt7);
+                       tr.appendChild(td7);
+
+                       document.getElementById('planning').appendChild(tr);
+
+                   }
+
+               }
+
+               generate_table()
+
+           });
+
 
         });
     });
@@ -178,6 +266,7 @@ function my_action() {
 
     echo json_encode($result);
 
+    wp_die();
 
     // this is required to terminate immediately and return a proper response
 }
